@@ -11,7 +11,7 @@ export async function getCurrentUserTenant(ctx: QueryCtx | MutationCtx) {
   // Get the current user ID from convex-auth
   const userId = await getAuthUserId(ctx);
   if (!userId) {
-    throw new ConvexError("User not authenticated");
+    return null; // User is not authenticated
   }
 
   // Get the user's tenant relationship
@@ -84,7 +84,7 @@ export async function requireRole(
 export async function getUserTenants(ctx: QueryCtx | MutationCtx) {
   const userId = await getAuthUserId(ctx);
   if (!userId) {
-    throw new ConvexError("User not authenticated");
+    return [];
   }
 
   const userTenants = await ctx.db
