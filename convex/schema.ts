@@ -23,10 +23,8 @@ const applicationTables = {
   userTenants: defineTable({
     userId: v.id("users"),
     tenantId: v.id("tenants"),
-    role: v.union(
-      v.literal("admin"),
-      v.literal("dispatcher"),
-      v.literal("driver")
+    roles: v.array(
+      v.union(v.literal("admin"), v.literal("dispatcher"), v.literal("driver"))
     ),
   })
     .index("by_userId", ["userId"])
@@ -35,10 +33,8 @@ const applicationTables = {
   invites: defineTable({
     email: v.string(),
     tenantId: v.id("tenants"),
-    role: v.union(
-      v.literal("admin"),
-      v.literal("dispatcher"),
-      v.literal("driver")
+    role: v.array(
+      v.union(v.literal("admin"), v.literal("dispatcher"), v.literal("driver"))
     ),
     createdAt: v.number(),
     expiresAt: v.number(),

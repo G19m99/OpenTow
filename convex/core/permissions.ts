@@ -10,6 +10,6 @@ export const getUserRoles = query({
       return "";
     }
 
-    return userTenant.role;
+    return userTenant.roles;
   },
 });

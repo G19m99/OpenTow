@@ -1,8 +1,18 @@
 import SignOutWithGoogle from "@/auth/oauth/SignOutWithGoogle";
 import { Menu } from "lucide-react";
+import { useLocation } from "react-router";
+
+const titleMap: Record<string, string> = {
+  "/": "Dashboard",
+  "/users": "User Management",
+  "/open-jobs": "Open Jobs",
+  "/my-jobs": "My Jobs",
+};
 
 const Navbar = () => {
-  const title = "My Application"; // TODO: get title
+  const location = useLocation();
+  const { pathname } = location;
+  const title = titleMap[pathname];
   return (
     <header className="bg-background sticky top-0 z-40 w-full border-b">
       <div className="flex h-16 items-center justify-between py-4">

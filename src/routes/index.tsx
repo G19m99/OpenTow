@@ -1,21 +1,23 @@
-import SignOutWithGoogle from "@/auth/oauth/SignOutWithGoogle";
 import Layout from "@/layout";
+import CreateTenantForm from "@/pages/createTenant/CreateTenantForm";
+import Dashboard from "@/pages/dashboard/Dashboard";
+import OpenJobs from "@/pages/OpenJobs/OpenJobs";
 import { SignInForm } from "@/pages/login/SignInForm";
-import { Route, Routes } from "react-router";
+import UserManagement from "@/pages/usersManagment/UserManagement";
+import { Navigate, Route, Routes } from "react-router";
+import MyJobs from "@/pages/myJobs/MyJobs";
 
 const AppRoutes = () => (
   <Routes>
     <Route path="login" element={<SignInForm />} />
+    <Route path="create-tenant" element={<CreateTenantForm />} />
     <Route element={<Layout />}>
-      <Route
-        path="/"
-        element={
-          <div>
-            Welcome to the authenticated area! <SignOutWithGoogle />
-          </div>
-        }
-      />
+      <Route path="/" element={<Dashboard />} />
+      <Route path="/users" element={<UserManagement />} />
+      <Route path="/open-jobs" element={<OpenJobs />} />
+      <Route path="/my-jobs" element={<MyJobs />} />
     </Route>
+    <Route path="*" element={<Navigate to="/" replace />} />
   </Routes>
 );
 

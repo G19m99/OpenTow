@@ -26,7 +26,7 @@ export async function getCurrentUserTenant(ctx: QueryCtx | MutationCtx) {
 
   return {
     tenant: userTenant,
-    role: userTenant.role,
+    roles: userTenant.roles,
   };
 }
 
@@ -36,12 +36,61 @@ export async function getCurrentUserTenant(ctx: QueryCtx | MutationCtx) {
  */
 export async function getCurrentUserTenantId(
   ctx: QueryCtx | MutationCtx
-): Promise<Id<"userTenants">> {
+): Promise<Id<"tenants">> {
   const tenant = await getCurrentUserTenant(ctx);
   if (!tenant) {
     throw new ConvexError("User has no tenant assigned");
   }
-  return tenant.tenant._id;
+  return tenant.tenant.tenantId;
+}
+
+/**
+ * Get a user by from a tenant
+ */
+export async function getUserFromTenant(
+  ctx: QueryCtx | MutationCtx,
+  userId: Id<"users">,
+  tenantId: Id<"tenants">
+) {
+  const userTenant = await ctx.db
+    .query("userTenants")
+    .withIndex("by_user_and_tenant", (q) =>
+      q.eq("userId", userId).eq("tenantId", tenantId)
+    )
+    .first();
+
+  if (!userTenant) {
+    throw new ConvexError("User not found in this tenant");
+  }
+
+  const user = await ctx.db.get(userId);
+  if (!user) {
+    throw new ConvexError("User record not found");
+  }
+
+  return {
+    ...user,
+    roles: userTenant.roles,
+    tenantId: userTenant.tenantId,
+  };
+}
+
+/**
+ * User exists in tenant
+ */
+export async function userExistsInTenant(
+  ctx: QueryCtx | MutationCtx,
+  userId: Id<"users">,
+  tenantId: Id<"tenants">
+) {
+  const userTenant = await ctx.db
+    .query("userTenants")
+    .withIndex("by_user_and_tenant", (q) =>
+      q.eq("userId", userId).eq("tenantId", tenantId)
+    )
+    .first();
+
+  return userTenant;
 }
 
 /**
@@ -55,14 +104,22 @@ export async function hasRole(
   if (!tenant) {
     return false;
   }
-  // Define role hierarchy (admin > dispatcher > driver)
-  const roleHierarchy = {
-    admin: 3,
-    dispatcher: 2,
-    driver: 1,
-  };
-
-  return roleHierarchy[tenant.role] >= roleHierarchy[requiredRole];
+  return tenant.roles.includes(requiredRole);
+}
+/**
+ * Check role and throw error if not
+ */
+export async function requireRoleOrThrow(
+  ctx: QueryCtx | MutationCtx,
+  requiredRole: "admin" | "dispatcher" | "driver"
+) {
+  const tenant = await getCurrentUserTenant(ctx);
+  if (!tenant) {
+    throw new ConvexError("User has no tenant assigned");
+  }
+  if (!tenant.roles.includes(requiredRole)) {
+    throw new ConvexError(`Access denied. Required role: ${requiredRole}`);
+  }
 }
 
 /**
@@ -95,7 +152,7 @@ export async function getUserTenants(ctx: QueryCtx | MutationCtx) {
   const tenantsWithRoles = userTenants.map((userTenant) => {
     return {
       tenantId: userTenant.tenantId,
-      role: userTenant.role,
+      roles: userTenant.roles,
     };
   });
 

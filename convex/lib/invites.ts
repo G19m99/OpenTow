@@ -23,7 +23,7 @@ export async function acceptInvite(
     await ctx.db.insert("userTenants", {
       userId: userId,
       tenantId: invite.tenantId,
-      role: invite.role,
+      roles: invite.role,
     });
 
     await ctx.db.patch(invite._id, {

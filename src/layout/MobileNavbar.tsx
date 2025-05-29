@@ -20,16 +20,15 @@ const MobileNavbar = ({ userRoles }: MobileNavbarProps) => {
     },
     {
       title: "Open Calls",
-      href: "/open-calls",
+      href: "/open-jobs",
       icon: ClipboardList,
-      show: isDriver,
+      show: isDriver || isDispatcher || isAdmin,
     },
-    // Drivers see my calls
     {
-      title: "My Calls",
-      href: "/my-calls",
+      title: "My Jobs",
+      href: "/my-jobs",
       icon: Truck,
-      show: isDriver,
+      show: isDriver || isDispatcher || isAdmin,
     },
     {
       title: "Users",
@@ -38,10 +37,10 @@ const MobileNavbar = ({ userRoles }: MobileNavbarProps) => {
       show: isAdmin,
     },
   ].filter((item) => item.show);
-  console.log("pathname", pathname);
+
   return (
     <div className="fixed bottom-0 left-0 z-50 h-16 w-full border-t bg-white md:hidden">
-      <div className="mx-auto flex h-full items-center justify-between px-3">
+      <div className="mx-auto flex h-full items-center justify-around px-3">
         {navItems.map((item) => (
           <Link
             key={item.href}
