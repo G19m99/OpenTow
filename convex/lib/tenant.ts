@@ -169,3 +169,20 @@ export async function userHasTenant(
   const tenant = await getCurrentUserTenant(ctx);
   return tenant !== null;
 }
+
+export async function tenantAdminCount(
+  ctx: QueryCtx | MutationCtx,
+  tenantId: Id<"tenants">
+) {
+  // Ensure at least one admin exists in the tenant
+  const userTenants = await ctx.db
+    .query("userTenants")
+    .withIndex("by_tenantId", (q) => q.eq("tenantId", tenantId))
+    .collect();
+
+  const admins = userTenants.filter((userTenant) =>
+    userTenant.roles.includes("admin")
+  );
+
+  return admins.length;
+}
