@@ -1,4 +1,4 @@
-import React from "react";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -8,12 +8,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
-import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { roles } from "@/constants";
+import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { roles } from "@/constants";
+import { Plus } from "lucide-react";
+import React, { useState } from "react";
 
 type InviteUserFormProps = {
   inviteDialogOpen: boolean;
@@ -26,12 +26,22 @@ const InviteUserForm = ({
   setInviteDialogOpen,
   handleInviteUser,
 }: InviteUserFormProps) => {
+  const [roleStates, setRoleStates] = useState<Record<string, boolean>>(
+    roles.reduce((acc, role) => ({ ...acc, [role]: false }), {})
+  );
+
+  const handleRoleChange = (role: string, checked: boolean) => {
+    setRoleStates((prev) => ({ ...prev, [role]: checked }));
+  };
+
   return (
     <Dialog open={inviteDialogOpen} onOpenChange={setInviteDialogOpen}>
       <DialogTrigger>
-        <Button className="rounded-full">
-          <Plus className="mr-2 h-4 w-4" />
-          Add User
+        <Button className="rounded-full" asChild>
+          <span>
+            <Plus className="mr-2 h-4 w-4" />
+            Add User
+          </span>
         </Button>
       </DialogTrigger>
       <DialogContent>
@@ -61,9 +71,16 @@ const InviteUserForm = ({
                       {role}
                     </Label>
                     <Switch
-                      id={`role`}
-                      checked={true}
-                      onCheckedChange={() => {}}
+                      id={`role-${role}`}
+                      checked={roleStates[role]}
+                      onCheckedChange={(checked) =>
+                        handleRoleChange(role, checked)
+                      }
+                    />
+                    <input
+                      type="hidden"
+                      name={`role-${role}`}
+                      value={roleStates[role] ? "true" : "false"}
                     />
                   </div>
                 ))}

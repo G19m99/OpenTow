@@ -16,6 +16,7 @@ import type {
 import type * as auth from "../auth.js";
 import type * as core_permissions from "../core/permissions.js";
 import type * as core_tenant from "../core/tenant.js";
+import type * as features_invites_mutations from "../features/invites/mutations.js";
 import type * as features_tenants_mutations from "../features/tenants/mutations.js";
 import type * as features_users_mutations from "../features/users/mutations.js";
 import type * as features_users_queries from "../features/users/queries.js";
@@ -35,6 +36,7 @@ declare const fullApi: ApiFromModules<{
   auth: typeof auth;
   "core/permissions": typeof core_permissions;
   "core/tenant": typeof core_tenant;
+  "features/invites/mutations": typeof features_invites_mutations;
   "features/tenants/mutations": typeof features_tenants_mutations;
   "features/users/mutations": typeof features_users_mutations;
   "features/users/queries": typeof features_users_queries;

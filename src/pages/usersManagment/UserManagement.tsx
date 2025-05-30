@@ -11,6 +11,8 @@ import { useState } from "react";
 import InviteUserForm from "./InviteUserForm";
 import { roles, type RolesType } from "@/constants";
 import type { Id } from "@c/_generated/dataModel";
+import { ConvexError } from "convex/values";
+import { toast } from "sonner";
 
 export default function UserManagement() {
   const users = useQuery(api.features.users.queries.getUsers);
@@ -23,6 +25,7 @@ export default function UserManagement() {
   const changeActiveStatus = useMutation(
     api.features.users.mutations.changeActiveStatus
   );
+  const inviteUser = useMutation(api.features.invites.mutations.inviteUser);
 
   const filteredUsers = users
     ? users.filter(
@@ -47,10 +50,27 @@ export default function UserManagement() {
   const handleAddUser = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
-    console.log("Adding new user:", {
-      email: formData.get("email"),
-      roles: formData.getAll("roles"),
-    });
+    const selectedRoles = roles.filter(
+      (role) => formData.get(`role-${role}`) === "true"
+    );
+
+    inviteUser({
+      email: formData.get("email") as string,
+      roles: selectedRoles,
+    })
+      .then(() => {
+        toast.success("User invited successfully!");
+      })
+      .catch((error) => {
+        if (error instanceof ConvexError) {
+          const msg = error.data;
+          toast.error(msg);
+        } else {
+          console.error("Error inviting user:", error.message);
+          alert("Failed to invite user. Please try again.");
+        }
+      });
+
     setIsAddUserOpen(false);
   };
 
