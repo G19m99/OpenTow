@@ -4,19 +4,18 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { roles, type RolesType } from "@/constants";
 import { api } from "@c/_generated/api";
+import type { Id } from "@c/_generated/dataModel";
 import { useMutation, useQuery } from "convex/react";
+import { ConvexError } from "convex/values";
 import { Mail, Search } from "lucide-react";
 import { useState } from "react";
-import InviteUserForm from "./InviteUserForm";
-import { roles, type RolesType } from "@/constants";
-import type { Id } from "@c/_generated/dataModel";
-import { ConvexError } from "convex/values";
 import { toast } from "sonner";
+import InviteUserForm from "./InviteUserForm";
 
 export default function UserManagement() {
   const users = useQuery(api.features.users.queries.getUsers);
-  console.log("Users from query:", users);
   const [searchQuery, setSearchQuery] = useState("");
   const [isAddUserOpen, setIsAddUserOpen] = useState(false);
   const changeRoles = useMutation(

@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { priorityLabels, statusLabels } from "@/constants";
 import { api } from "@c/_generated/api";
 import { useQuery } from "convex/react";
 import type { FunctionReturnType } from "convex/server";
@@ -28,32 +29,6 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import DispatchForm from "./components/DispatchForm";
-
-const statusLabels: Record<
-  string,
-  {
-    label: string;
-    variant: "default" | "outline" | "secondary" | "destructive";
-  }
-> = {
-  open: { label: "Open", variant: "outline" },
-  assigned: { label: "Assigned", variant: "secondary" },
-  in_progress: { label: "In Progress", variant: "default" },
-  completed: { label: "Completed", variant: "default" },
-  cancelled: { label: "Cancelled", variant: "destructive" },
-};
-
-const priorityLabels: Record<
-  string,
-  {
-    label: string;
-    variant: "default" | "outline" | "secondary" | "destructive";
-  }
-> = {
-  low: { label: "Low", variant: "outline" },
-  normal: { label: "Normal", variant: "secondary" },
-  high: { label: "High", variant: "destructive" },
-};
 
 type Job = FunctionReturnType<typeof api.features.jobs.queries.allJobs>[number];
 const Dashboard = () => {
@@ -76,7 +51,7 @@ const Dashboard = () => {
         job._id.toLowerCase().includes(searchQuery.toLowerCase())
     )
     .filter((job) => activeTab === "all" || job.status === activeTab);
-  console.log("jobs", jobs);
+
   return (
     <div className="space-y-4 pt-1">
       <div className="flex items-center justify-between mb-4">

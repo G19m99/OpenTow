@@ -87,3 +87,42 @@ export const updateJob = mutation({
     return await ctx.db.patch(args.id, updatedJob);
   },
 });
+
+export const updateJobStatus = mutation({
+  args: {
+    id: v.id("jobs"),
+    status: v.union(
+      v.literal("open"),
+      v.literal("assigned"),
+      v.literal("in_progress"),
+      v.literal("completed"),
+      v.literal("cancelled")
+    ),
+  },
+  handler: async (ctx, args) => {
+    await requireAnyRoleOrThrow(ctx, ["dispatcher", "admin"]);
+    const tenant = await getCurrentUserTenant(ctx);
+
+    if (!tenant) {
+      throw new Error("User has no tenant assigned");
+    }
+
+    const jobs = await ctx.db
+      .query("jobs")
+      .withIndex("by_driver", (q) =>
+        q
+          .eq("tenantId", tenant.tenant.tenantId)
+          .eq("driverId", tenant.tenant.userId)
+      )
+      .collect();
+    const job = jobs.find((j) => j._id === args.id);
+    if (!job) {
+      throw new Error("Job not found");
+    }
+
+    await ctx.db.patch(args.id, {
+      status: args.status,
+      completedAt: args.status === "completed" ? Date.now() : undefined,
+    });
+  },
+});
