@@ -28,9 +28,9 @@ const applicationTables = {
     ),
     active: v.boolean(),
   })
-    .index("by_userId", ["userId"])
-    .index("by_tenantId", ["tenantId"])
-    .index("by_user_and_tenant", ["userId", "tenantId"]),
+    .index("by_userId", ["userId", "active"])
+    .index("by_tenantId", ["tenantId", "active"])
+    .index("by_user_and_tenant", ["userId", "tenantId", "active"]),
   invites: defineTable({
     email: v.string(),
     tenantId: v.id("tenants"),
@@ -52,15 +52,19 @@ const applicationTables = {
     status: v.union(
       v.literal("open"),
       v.literal("assigned"),
-      v.literal("completed")
+      v.literal("in_progress"),
+      v.literal("completed"),
+      v.literal("cancelled")
     ),
     priority: v.union(v.literal("normal"), v.literal("high"), v.literal("low")),
     vehicleInfo: v.string(),
     createdAt: v.number(),
     dispatcherId: v.id("users"),
     driverId: v.optional(v.id("users")),
+    driverName: v.optional(v.string()),
     completedAt: v.optional(v.number()),
   })
+    .index("by_tenantId", ["tenantId"])
     .index("by_status", ["tenantId", "status"])
     .index("by_driver", ["tenantId", "driverId"])
     .index("by_date", ["tenantId", "createdAt"]),

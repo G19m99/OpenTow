@@ -123,6 +123,24 @@ export async function requireRoleOrThrow(
 }
 
 /**
+ * Check array of roles and throw error if not
+ */
+export async function requireAnyRoleOrThrow(
+  ctx: QueryCtx | MutationCtx,
+  requiredRoles: ("admin" | "dispatcher" | "driver")[]
+) {
+  const tenant = await getCurrentUserTenant(ctx);
+  if (!tenant) {
+    throw new ConvexError("User has no tenant assigned");
+  }
+  const hasAnyRole = requiredRoles.some((role) => tenant.roles.includes(role));
+  if (!hasAnyRole) {
+    throw new ConvexError(
+      `Access denied. Required roles: ${requiredRoles.join(", ")}`
+    );
+  }
+}
+/**
  * Ensure user has required role, throw error if not
  */
 export async function requireRole(

@@ -1,5 +1,9 @@
 import { query } from "../../_generated/server";
-import { getCurrentUserTenantId, hasRole } from "../../lib/tenant";
+import {
+  getCurrentUserTenantId,
+  hasRole,
+  requireAnyRoleOrThrow,
+} from "../../lib/tenant";
 
 export const getUsers = query({
   args: {},
@@ -30,6 +34,41 @@ export const getUsers = query({
           roles: userTenant.roles, // Include the roles from the junction table
           tenantId: userTenant.tenantId,
           active: userTenant.active,
+        };
+      })
+    );
+
+    const filteredUsers = users.filter(
+      (user): user is NonNullable<typeof user> =>
+        user !== null && user._id !== undefined
+    );
+
+    return filteredUsers;
+  },
+});
+
+export const getDrivers = query({
+  args: {},
+  handler: async (ctx) => {
+    await requireAnyRoleOrThrow(ctx, ["admin", "dispatcher"]);
+    const tenantId = await getCurrentUserTenantId(ctx);
+
+    const driverIds = await ctx.db
+      .query("userTenants")
+      .withIndex("by_tenantId", (q) =>
+        q.eq("tenantId", tenantId).eq("active", true)
+      )
+      .collect()
+      .then((rows) => rows.filter((row) => row.roles.includes("driver")));
+
+    const users = await Promise.all(
+      driverIds.map(async (driver) => {
+        const user = await ctx.db.get(driver.userId);
+        if (!user) return null;
+        return {
+          ...user,
+          roles: driver.roles,
+          tenantId: driver.tenantId,
         };
       })
     );
