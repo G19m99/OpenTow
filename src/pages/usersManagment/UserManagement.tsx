@@ -20,6 +20,9 @@ export default function UserManagement() {
   const changeRoles = useMutation(
     api.features.users.mutations.changeUserRoleAccess
   );
+  const changeActiveStatus = useMutation(
+    api.features.users.mutations.changeActiveStatus
+  );
 
   const filteredUsers = users
     ? users.filter(
@@ -30,7 +33,6 @@ export default function UserManagement() {
     : [];
 
   const handleRoleToggle = (role: RolesType, userId: Id<"users">) => {
-    console.log(`Toggling role ${role} for user ${userId}`);
     changeRoles({
       userId: userId,
       role: {
@@ -52,8 +54,11 @@ export default function UserManagement() {
     setIsAddUserOpen(false);
   };
 
-  const handleStatusToggle = (userId: string) => {
-    console.log(`Deleting user with ID: ${userId}`);
+  const handleStatusToggle = (userId: Id<"users">) => {
+    changeActiveStatus({
+      userId: userId,
+      active: !filteredUsers.find((u) => u._id === userId)?.active,
+    });
   };
 
   const getInitials = (name: string) => {
@@ -115,7 +120,7 @@ export default function UserManagement() {
                       </div>
                       <div className="flex items-center gap-2">
                         <Switch
-                          checked={true}
+                          checked={user.active}
                           onCheckedChange={() => handleStatusToggle(user._id)}
                           aria-label="Toggle status"
                         />

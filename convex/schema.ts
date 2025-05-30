@@ -26,6 +26,7 @@ const applicationTables = {
     roles: v.array(
       v.union(v.literal("admin"), v.literal("dispatcher"), v.literal("driver"))
     ),
+    active: v.boolean(),
   })
     .index("by_userId", ["userId"])
     .index("by_tenantId", ["tenantId"])

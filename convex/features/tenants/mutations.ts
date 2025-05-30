@@ -37,6 +37,7 @@ export const createTenant = mutation({
       userId,
       tenantId: tenantId,
       roles: ["admin"],
+      active: true,
     });
 
     // Return the created tenant

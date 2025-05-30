@@ -29,6 +29,7 @@ export const getUsers = query({
           ...user,
           roles: userTenant.roles, // Include the roles from the junction table
           tenantId: userTenant.tenantId,
+          active: userTenant.active,
         };
       })
     );

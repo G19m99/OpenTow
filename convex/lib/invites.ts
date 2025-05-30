@@ -24,6 +24,7 @@ export async function acceptInvite(
       userId: userId,
       tenantId: invite.tenantId,
       roles: invite.role,
+      active: true,
     });
 
     await ctx.db.patch(invite._id, {
