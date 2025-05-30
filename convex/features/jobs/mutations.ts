@@ -126,3 +126,32 @@ export const updateJobStatus = mutation({
     });
   },
 });
+
+export const claimJob = mutation({
+  args: {
+    jobId: v.id("jobs"),
+  },
+  handler: async (ctx, args) => {
+    const tenant = await getCurrentUserTenant(ctx);
+    if (!tenant) {
+      throw new Error("User has no tenant assigned");
+    }
+
+    const job = await ctx.db.get(args.jobId);
+    if (!job || job.tenantId !== tenant.tenant.tenantId) {
+      throw new Error("Job not found or not accessible");
+    }
+
+    if (job.status !== "open") {
+      throw new Error("Job is not open for claiming");
+    }
+
+    const driver = await ctx.db.get(tenant.tenant.userId);
+
+    await ctx.db.patch(args.jobId, {
+      status: "assigned",
+      driverId: tenant.tenant.userId,
+      driverName: driver?.name || "Unknown Driver",
+    });
+  },
+});

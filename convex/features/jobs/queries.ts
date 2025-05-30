@@ -36,4 +36,21 @@ export const usersJobs = query({
   },
 });
 
+export const openJobs = query({
+  args: {},
+  handler: async (ctx) => {
+    const tenant = await getCurrentUserTenant(ctx);
+    if (!tenant) {
+      throw new Error("User has no tenant assigned");
+    }
 
+    const jobs = await ctx.db
+      .query("jobs")
+      .withIndex("by_status", (q) =>
+        q.eq("tenantId", tenant.tenant.tenantId).eq("status", "open")
+      )
+      .collect();
+
+    return jobs;
+  },
+});

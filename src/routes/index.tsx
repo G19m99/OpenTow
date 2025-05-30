@@ -1,7 +1,7 @@
 import Layout from "@/layout";
 import CreateTenantForm from "@/pages/createTenant/CreateTenantForm";
 import Dashboard from "@/pages/dashboard/Dashboard";
-import OpenJobs from "@/pages/OpenJobs/OpenJobs";
+import OpenJobs from "@/pages/openJobs/OpenJobs";
 import { SignInForm } from "@/pages/login/SignInForm";
 import UserManagement from "@/pages/usersManagment/UserManagement";
 import { Navigate, Route, Routes } from "react-router";
