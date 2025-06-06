@@ -84,129 +84,127 @@ const DispatchForm = ({ setIsFormOpen, defaultValues }: DispatchFormProps) => {
   if (!drivers) return <div>Loading drivers...</div>;
 
   return (
-    <div className="space-y-4">
-      <Card className="border-none shadow-sm max-h-[100dvw-100px]">
-        <form onSubmit={handleSubmit}>
-          <CardContent className="space-y-4 pt-6">
-            <div className="space-y-2">
-              <Label htmlFor="customerName">Customer Name</Label>
+    <Card className="border-none shadow-sm ">
+      <form onSubmit={handleSubmit}>
+        <CardContent className="space-y-4 pt-6 max-h-[calc(100vh-200px)] overflow-y-auto">
+          <div className="space-y-2">
+            <Label htmlFor="customerName">Customer Name</Label>
+            <Input
+              id="customerName"
+              name="customerName"
+              required
+              className="rounded-full"
+              defaultValue={defaultValues?.customerName}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="phoneNumber">Phone Number</Label>
+            <div className="relative">
+              <Phone className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
-                id="customerName"
-                name="customerName"
+                id="phoneNumber"
+                name="phoneNumber"
                 required
-                className="rounded-full"
-                defaultValue={defaultValues?.customerName}
+                className="pl-10 rounded-full"
+                defaultValue={defaultValues?.customerPhone}
+                type="tel"
               />
             </div>
+          </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="phoneNumber">Phone Number</Label>
-              <div className="relative">
-                <Phone className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-                <Input
-                  id="phoneNumber"
-                  name="phoneNumber"
-                  required
-                  className="pl-10 rounded-full"
-                  defaultValue={defaultValues?.customerPhone}
-                  type="tel"
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="location">Pickup Location</Label>
-              <div className="relative">
-                <MapPin className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-                <Input
-                  id="location"
-                  name="location"
-                  required
-                  className="pl-10 rounded-full"
-                  defaultValue={defaultValues?.location}
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="vehicleInfo">Vehicle Information</Label>
-              <div className="relative">
-                <Car className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-                <Input
-                  id="vehicleInfo"
-                  name="vehicleInfo"
-                  placeholder="Year, Make, Model, Color"
-                  required
-                  className="pl-10 rounded-full"
-                  defaultValue={defaultValues?.vehicleInfo}
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="description">Description</Label>
-              <Textarea
-                id="description"
-                name="description"
-                placeholder="Additional details about the tow request"
-                rows={3}
-                className="rounded-xl"
-                defaultValue={defaultValues?.description}
+          <div className="space-y-2">
+            <Label htmlFor="location">Pickup Location</Label>
+            <div className="relative">
+              <MapPin className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                id="location"
+                name="location"
+                required
+                className="pl-10 rounded-full"
+                defaultValue={defaultValues?.location}
               />
             </div>
+          </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="driverId">Assign Driver</Label>
-              <Select name="driver" defaultValue={driverDefault}>
-                <SelectTrigger className="rounded-full">
-                  <SelectValue placeholder="Select a driver" />
-                </SelectTrigger>
-                <SelectContent>
-                  {drivers?.map((driver) => (
-                    <SelectItem
-                      key={driver._id}
-                      value={JSON.stringify({
-                        driverId: driver._id,
-                        driverName: driver.name,
-                      })}
-                    >
-                      {driver.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+          <div className="space-y-2">
+            <Label htmlFor="vehicleInfo">Vehicle Information</Label>
+            <div className="relative">
+              <Car className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                id="vehicleInfo"
+                name="vehicleInfo"
+                placeholder="Year, Make, Model, Color"
+                required
+                className="pl-10 rounded-full"
+                defaultValue={defaultValues?.vehicleInfo}
+              />
             </div>
+          </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="priority">Priority</Label>
-              <Select
-                name="priority"
-                defaultValue={defaultValues?.priority || "normal"}
-              >
-                <SelectTrigger className="rounded-full">
-                  <SelectValue placeholder="Select priority" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="high">
-                    <div className="flex items-center">
-                      <AlertCircle className="mr-2 h-4 w-4 text-destructive" />
-                      High
-                    </div>
+          <div className="space-y-2">
+            <Label htmlFor="description">Description</Label>
+            <Textarea
+              id="description"
+              name="description"
+              placeholder="Additional details about the tow request"
+              rows={3}
+              className="rounded-xl"
+              defaultValue={defaultValues?.description}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="driverId">Assign Driver</Label>
+            <Select name="driver" defaultValue={driverDefault}>
+              <SelectTrigger className="rounded-full">
+                <SelectValue placeholder="Select a driver" />
+              </SelectTrigger>
+              <SelectContent>
+                {drivers?.map((driver) => (
+                  <SelectItem
+                    key={driver._id}
+                    value={JSON.stringify({
+                      driverId: driver._id,
+                      driverName: driver.name,
+                    })}
+                  >
+                    {driver.name}
                   </SelectItem>
-                  <SelectItem value="normal">Normal</SelectItem>
-                  <SelectItem value="low">Low</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </CardContent>
-          <CardFooter>
-            <Button type="submit" className="w-full rounded-full">
-              {defaultValues ? "update Job" : "Create Dispatch"}
-            </Button>
-          </CardFooter>
-        </form>
-      </Card>
-    </div>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="priority">Priority</Label>
+            <Select
+              name="priority"
+              defaultValue={defaultValues?.priority || "normal"}
+            >
+              <SelectTrigger className="rounded-full">
+                <SelectValue placeholder="Select priority" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="high">
+                  <div className="flex items-center">
+                    <AlertCircle className="mr-2 h-4 w-4 text-destructive" />
+                    High
+                  </div>
+                </SelectItem>
+                <SelectItem value="normal">Normal</SelectItem>
+                <SelectItem value="low">Low</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </CardContent>
+        <CardFooter>
+          <Button type="submit" className="w-full rounded-full">
+            {defaultValues ? "update Job" : "Create Dispatch"}
+          </Button>
+        </CardFooter>
+      </form>
+    </Card>
   );
 };
 
