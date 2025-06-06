@@ -41,8 +41,8 @@ const MyJobs = () => {
 
   return (
     <div className="space-y-4">
-      <Tabs defaultValue="all" className="w-full" onValueChange={setActiveTab}>
-        <TabsList className="grid grid-cols-3 mb-4">
+      <Tabs defaultValue="all" className="w-full mt-1.5" onValueChange={setActiveTab}>
+        <TabsList className="grid grid-cols-3 mb-4 w-full">
           <TabsTrigger value="all">All</TabsTrigger>
           <TabsTrigger value="assigned">New</TabsTrigger>
           <TabsTrigger value="in_progress">Active</TabsTrigger>
