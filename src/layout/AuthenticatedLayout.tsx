@@ -1,7 +1,9 @@
 import type { RolesType } from "@/constants";
 import { Link, Outlet } from "react-router";
+import AppSidebar from "./AppSidebar";
 import MobileNavbar from "./MobileNavbar";
 import Navbar from "./Navbar";
+import { SidebarProvider } from "@/components/ui/sidebar";
 
 type AuthenticatedLayoutProps = {
   hasTenant: boolean;
@@ -24,13 +26,16 @@ const AuthenticatedLayout = ({
     );
   }
   return (
-    <div className="h-screen w-screen overflow-hidden">
-      <Navbar />
-      <div className="h-full max-h-[calc(100%-129px)] overflow-y-auto">
-        <Outlet />
+    <SidebarProvider>
+      <div className="h-screen w-screen overflow-hidden">
+        <Navbar />
+        <AppSidebar userRoles={roles} />
+        <div className="h-full max-h-[calc(100%-129px)] overflow-y-auto">
+          <Outlet />
+        </div>
+        <MobileNavbar userRoles={roles} />
       </div>
-      <MobileNavbar userRoles={roles} />
-    </div>
+    </SidebarProvider>
   );
 };
 
