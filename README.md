@@ -1,54 +1,41 @@
-# React + TypeScript + Vite
+# OpenTow
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A B2B SaaS platform designed for towing companies, implementing an open dispatch model where drivers can claim jobs on a first-come, first-served basis
 
-Currently, two official plugins are available:
+## Demo
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+coming soon!
 
-## Expanding the ESLint configuration
+## Features
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- Real-time with reactive updates
+- Multi-organization support
+- Role-based access per tenant (admin, dispatcher, driver)
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+## Tech Stack
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+React, Typescript, Redux, TailwindCSS, Convex
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Architecture & Authentication
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+This SaaS platform supports multiple organizations (tenants), each with isolated data and user roles. The backend is powered by [Convex](https://convex.dev), and user authentication is handled via Google OAuth.
+
+### Multi-Tenancy
+
+- Each towing company is represented as a **tenant**.
+- **Users can belong to multiple tenants**, with tenant-specific roles (e.g., admin, dispatcher, driver).
+- All domain data (jobs, users, invites) is **scoped by tenantId** to ensure strict data isolation.
+- The current tenant is tracked via `currentTenantId` on the user record, allowing seamless context switching.
+- Queries and mutations are automatically filtered by the current tenant to prevent cross-tenant access.
+
+### Authentication & Onboarding
+
+- Authentication is done via **Google OAuth**, using Convex Auth.
+- Upon first login:
+  - If the user's email matches a pending invite (by email + tenant), they are auto-linked to that organization and assigned a role.
+  - If no invite is found, users land on an onboarding screen to **create a new tenant** or (in future) **request access** to an existing one.
+- Session state is managed by Convex, and protected routes ensure users only access tenant-specific data.
+
+## Google OAuth setup
+
+In order to use the google auth follow the instructions [here](https://labs.convex.dev/auth/config/oauth/google)
