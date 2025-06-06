@@ -1,11 +1,11 @@
 import Layout from "@/layout";
 import CreateTenantForm from "@/pages/createTenant/CreateTenantForm";
 import Dashboard from "@/pages/dashboard/Dashboard";
-import OpenJobs from "@/pages/openJobs/OpenJobs";
 import { SignInForm } from "@/pages/login/SignInForm";
+import MyJobs from "@/pages/myJobs/MyJobs";
+import OpenJobs from "@/pages/OpenJobs/OpenJobs";
 import UserManagement from "@/pages/usersManagment/UserManagement";
 import { Navigate, Route, Routes } from "react-router";
-import MyJobs from "@/pages/myJobs/MyJobs";
 
 const AppRoutes = () => (
   <Routes>

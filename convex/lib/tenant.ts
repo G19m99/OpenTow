@@ -1,7 +1,7 @@
-import { QueryCtx, MutationCtx } from "../_generated/server";
-import { ConvexError } from "convex/values";
-import { Id } from "../_generated/dataModel";
 import { getAuthUserId } from "@convex-dev/auth/server";
+import { ConvexError } from "convex/values";
+import { type Id } from "../_generated/dataModel";
+import { type MutationCtx, type QueryCtx } from "../_generated/server";
 
 /**
  * Get the current user's tenant information

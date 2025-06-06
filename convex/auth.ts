@@ -1,6 +1,6 @@
 import Google from "@auth/core/providers/google";
 import { convexAuth } from "@convex-dev/auth/server";
-import { MutationCtx } from "./_generated/server";
+import { type MutationCtx } from "./_generated/server";
 import { acceptInvite } from "./lib/invites";
 
 export const { auth, signIn, signOut, store, isAuthenticated } = convexAuth({
