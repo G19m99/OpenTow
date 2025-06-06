@@ -17,7 +17,7 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { priorityLabels, statusLabels } from "@/constants";
 import { api } from "@c/_generated/api";
-import { useQuery } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import type { FunctionReturnType } from "convex/server";
 import {
   Clock,
@@ -29,11 +29,15 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import DispatchForm from "./components/DispatchForm";
+import { toast } from "sonner";
 
 type Job = FunctionReturnType<typeof api.features.jobs.queries.allJobs>[number];
 const Dashboard = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const jobs = useQuery(api.features.jobs.queries.allJobs) || [];
+  const updateJobStatus = useMutation(
+    api.features.jobs.mutations.updateJobStatus
+  );
   const [activeTab, setActiveTab] = useState("all");
   const [isDispatchOpen, setIsDispatchOpen] = useState(false);
   const [editingJob, setEditingJob] = useState<Job | null>(null);
@@ -41,6 +45,11 @@ const Dashboard = () => {
   const handleEditJob = (job: Job) => {
     setEditingJob(job);
     setIsDispatchOpen(true);
+  };
+
+  const handleCancelJob = (job: Job) => {
+    updateJobStatus({ id: job._id, status: "cancelled" });
+    toast.success("Job cancelled successfully");
   };
 
   const filteredJobs = jobs
@@ -139,7 +148,10 @@ const Dashboard = () => {
                         <DropdownMenuItem onClick={() => handleEditJob(job)}>
                           Edit job
                         </DropdownMenuItem>
-                        <DropdownMenuItem className="text-red-500 hover:bg-red-500 hover:text-white">
+                        <DropdownMenuItem
+                          className="text-red-500 hover:bg-red-500 hover:text-white"
+                          onClick={() => handleCancelJob(job)}
+                        >
                           Cancel job
                         </DropdownMenuItem>
                       </DropdownMenuContent>
