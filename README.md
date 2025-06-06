@@ -4,7 +4,7 @@ A B2B SaaS platform designed for towing companies, implementing an open dispatch
 
 ## Demo
 
-coming soon!
+[Demo hosted on netlify](https://opentow.netlify.app/)
 
 ## Features
 
