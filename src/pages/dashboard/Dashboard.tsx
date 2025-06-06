@@ -52,6 +52,13 @@ const Dashboard = () => {
     )
     .filter((job) => activeTab === "all" || job.status === activeTab);
 
+  const handleDialogOpenChange = () => {
+    if (isDispatchOpen) {
+      setEditingJob(null);
+      setIsDispatchOpen(false);
+    }
+  };
+
   return (
     <div className="space-y-4 pt-1">
       <div className="flex items-center justify-between mb-4">
@@ -174,7 +181,7 @@ const Dashboard = () => {
       )}
 
       {/* Dispatch Dialog */}
-      <Dialog open={isDispatchOpen} onOpenChange={setIsDispatchOpen}>
+      <Dialog open={isDispatchOpen} onOpenChange={handleDialogOpenChange}>
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
             <DialogTitle>Create New Job</DialogTitle>

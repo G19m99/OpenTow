@@ -24,6 +24,7 @@ type DispatchFormProps = {
   setIsFormOpen: React.Dispatch<React.SetStateAction<boolean>>;
   defaultValues?: Job | null;
 };
+
 const DispatchForm = ({ setIsFormOpen, defaultValues }: DispatchFormProps) => {
   const drivers = useQuery(api.features.users.queries.getDrivers);
   const createJob = useMutation(api.features.jobs.mutations.createJob);
@@ -78,13 +79,13 @@ const DispatchForm = ({ setIsFormOpen, defaultValues }: DispatchFormProps) => {
         driverId: defaultValues.driverId,
         driverName: defaultValues.driverName,
       })
-    : "";
+    : undefined;
 
   if (!drivers) return <div>Loading drivers...</div>;
 
   return (
     <div className="space-y-4">
-      <Card className="border-none shadow-sm">
+      <Card className="border-none shadow-sm max-h-[100dvw-100px]">
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4 pt-6">
             <div className="space-y-2">
