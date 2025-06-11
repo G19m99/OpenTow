@@ -1,6 +1,6 @@
 import { ConvexError, v } from "convex/values";
 import { mutation } from "../../_generated/server";
-import { getAuthUserId } from "@convex-dev/auth/server";
+import { getAuthSessionId, getAuthUserId } from "@convex-dev/auth/server";
 
 export const createTenant = mutation({
   args: {
@@ -42,5 +42,32 @@ export const createTenant = mutation({
 
     // Return the created tenant
     return tenantId;
+  },
+});
+
+export const selectTenant = mutation({
+  args: { tenantId: v.id("tenants") },
+  handler: async (ctx, { tenantId }) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Not authenticated");
+
+    // Validate membership
+    const ut = await ctx.db
+      .query("userTenants")
+      .withIndex("by_user_and_tenant", (q) =>
+        q.eq("userId", userId).eq("tenantId", tenantId).eq("active", true)
+      )
+      .first();
+    if (!ut) throw new Error("Access denied");
+
+    // Link tenant to session
+    const sessionId = await getAuthSessionId(ctx);
+    if (!sessionId) throw new Error("No active session");
+
+    await ctx.db.insert("userSessionTenants", {
+      sessionId,
+      tenantId,
+      createdAt: Date.now(),
+    });
   },
 });

@@ -1,3 +1,4 @@
+import { getAuthUserId } from "@convex-dev/auth/server";
 import { query } from "../../_generated/server";
 import {
   getCurrentUserTenantId,
@@ -18,7 +19,6 @@ export const getUsers = query({
     }
 
     // Fetch all users in the current tenant
-
     const userTenants = await ctx.db
       .query("userTenants")
       .withIndex("by_tenantId", (q) => q.eq("tenantId", tenantId))
@@ -79,5 +79,39 @@ export const getDrivers = query({
     );
 
     return filteredUsers;
+  },
+});
+
+export const getUserTenants = query({
+  args: {},
+  handler: async (ctx) => {
+    const user = await getAuthUserId(ctx);
+    if (!user) {
+      throw new Error("User not authenticated");
+    }
+
+    // Fetch all userTenants for the current user
+    const userTenants = await ctx.db
+      .query("userTenants")
+      .withIndex("by_userId", (q) => q.eq("userId", user).eq("active", true))
+      .collect();
+
+    // Fetch the tenant details for each userTenant
+    const tenants = await Promise.all(
+      userTenants.map(async (userTenant) => {
+        const tenant = await ctx.db.get(userTenant.tenantId);
+        if (!tenant) return null;
+        return {
+          ...tenant,
+          roles: userTenant.roles, // Include the roles from the junction table
+          active: userTenant.active,
+        };
+      })
+    );
+
+    return tenants.filter(
+      (tenant): tenant is NonNullable<typeof tenant> =>
+        tenant !== null && tenant._id !== undefined
+    );
   },
 });

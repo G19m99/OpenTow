@@ -31,6 +31,11 @@ const applicationTables = {
     .index("by_userId", ["userId", "active"])
     .index("by_tenantId", ["tenantId", "active"])
     .index("by_user_and_tenant", ["userId", "tenantId", "active"]),
+  userSessionTenants: defineTable({
+    sessionId: v.id("authSessions"),
+    tenantId: v.id("tenants"),
+    createdAt: v.number(),
+  }).index("by_session", ["sessionId"]),
   invites: defineTable({
     email: v.string(),
     tenantId: v.id("tenants"),

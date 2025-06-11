@@ -1,4 +1,4 @@
-import { getAuthUserId } from "@convex-dev/auth/server";
+import { getAuthSessionId, getAuthUserId } from "@convex-dev/auth/server";
 import { ConvexError } from "convex/values";
 import { type Id } from "../_generated/dataModel";
 import { type MutationCtx, type QueryCtx } from "../_generated/server";
@@ -14,20 +14,29 @@ export async function getCurrentUserTenant(ctx: QueryCtx | MutationCtx) {
     return null; // User is not authenticated
   }
 
-  // Get the user's tenant relationship
-  const userTenant = await ctx.db
-    .query("userTenants")
-    .withIndex("by_userId", (q) => q.eq("userId", userId))
-    .first(); //! Assuming user belongs to one tenant for now
+  const sessionId = await getAuthSessionId(ctx);
+  if (!sessionId) return null;
 
-  if (!userTenant) {
+  const ust = await ctx.db
+    .query("userSessionTenants")
+    .withIndex("by_session", (q) => q.eq("sessionId", sessionId))
+    .first();
+
+  if (!ust) {
+    //TODO attempt to select tenant
     return null;
   }
 
-  return {
-    tenant: userTenant,
-    roles: userTenant.roles,
-  };
+  const ut = await ctx.db
+    .query("userTenants")
+    .withIndex("by_user_and_tenant", (q) =>
+      q.eq("userId", userId).eq("tenantId", ust.tenantId).eq("active", true)
+    )
+    .first();
+
+  if (!ut) throw new Error("Invalid tenant");
+
+  return { tenant: ut, roles: ut.roles };
 }
 
 /**

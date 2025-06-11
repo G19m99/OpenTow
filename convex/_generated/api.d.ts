@@ -20,6 +20,7 @@ import type * as features_invites_mutations from "../features/invites/mutations.
 import type * as features_jobs_mutations from "../features/jobs/mutations.js";
 import type * as features_jobs_queries from "../features/jobs/queries.js";
 import type * as features_tenants_mutations from "../features/tenants/mutations.js";
+import type * as features_tenants_queries from "../features/tenants/queries.js";
 import type * as features_users_mutations from "../features/users/mutations.js";
 import type * as features_users_queries from "../features/users/queries.js";
 import type * as http from "../http.js";
@@ -42,6 +43,7 @@ declare const fullApi: ApiFromModules<{
   "features/jobs/mutations": typeof features_jobs_mutations;
   "features/jobs/queries": typeof features_jobs_queries;
   "features/tenants/mutations": typeof features_tenants_mutations;
+  "features/tenants/queries": typeof features_tenants_queries;
   "features/users/mutations": typeof features_users_mutations;
   "features/users/queries": typeof features_users_queries;
   http: typeof http;

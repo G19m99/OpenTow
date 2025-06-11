@@ -1,81 +1,71 @@
+import LoadingSpinner from "@/components/LoadingSpinner";
+import NoTenantView from "@/components/tenants/NoTenantView";
+import { TenantSelector } from "@/components/tenants/TenantSelector";
+import { SidebarProvider } from "@/components/ui/sidebar";
 import type { RolesType } from "@/constants";
-import { Link, Outlet } from "react-router";
+import { useTenantState } from "@/hooks/useTenantState";
+import { Navigate, Outlet } from "react-router";
 import AppSidebar from "./AppSidebar";
 import MobileNavbar from "./MobileNavbar";
 import Navbar from "./Navbar";
-import { SidebarProvider } from "@/components/ui/sidebar";
 
-type AuthenticatedLayoutProps = {
-  hasTenant: boolean;
-  roles: RolesType[] | "" | undefined;
-};
+export function AuthenticatedLayout() {
+  const { tenantList, activeTenant, isLoadingTenants, isLoadingActiveTenant } =
+    useTenantState();
 
-const AuthenticatedLayout = ({
-  hasTenant,
-  roles,
-}: AuthenticatedLayoutProps) => {
-  if (!hasTenant) {
+  // Loading states
+  if (isLoadingTenants) {
+    return <LoadingSpinner message="Loading your organizations..." />;
+  }
+
+  if (isLoadingActiveTenant) {
+    return <LoadingSpinner message="Loading active organization..." />;
+  }
+
+  // No tenants scenario
+  if (tenantList.length === 0) {
     return <NoTenantView />;
   }
 
-  if (!roles || !roles.length) {
+  // Single tenant scenario
+  if (tenantList.length === 1) {
+    const tenant = tenantList[0];
     return (
-      <div className="text-center text-red-500 font-medium">
-        No role assigned please contact site admin
-      </div>
+      <TenantSelector tenantId={tenant._id} roles={tenant.roles}>
+        <AppLayout roles={tenant.roles} />
+      </TenantSelector>
     );
   }
+
+  // Multiple tenants scenario
+  if (!activeTenant?.activeTenant) {
+    return <Navigate to="/org-picker" replace />;
+  }
+
+  const { tenantId, roles } = activeTenant.activeTenant;
+
   return (
-    <SidebarProvider>
-      <div className="h-screen w-screen overflow-hidden">
-        <Navbar />
-        <AppSidebar userRoles={roles} />
-        <div className="h-full max-h-[calc(100%-129px)] overflow-y-auto">
-          <Outlet />
-        </div>
-        <MobileNavbar userRoles={roles} />
-      </div>
-    </SidebarProvider>
+    <TenantSelector tenantId={tenantId} roles={roles}>
+      <AppLayout roles={roles} />
+    </TenantSelector>
   );
-};
+}
 
 export default AuthenticatedLayout;
 
-const NoTenantView = () => {
-  return (
-    <div className="h-screen w-screen flex items-center justify-center bg-gray-50">
-      <div className="max-w-md w-full mx-4">
-        <div className="bg-white rounded-lg shadow-md p-8 text-center">
-          <div className="mb-6">
-            <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-blue-100 mb-4">
-              <svg
-                className="h-6 w-6 text-blue-600"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-4m-5 0H3m2 0h4M9 7h6m-6 4h6m-6 4h6m-6 4h6"
-                />
-              </svg>
-            </div>
-            <h2 className="text-xl font-semibold text-gray-900 mb-2">
-              No Organization Found
-            </h2>
-            <p className="text-gray-600">
-              You're not currently associated with any organization. Create one
-              to get started.
-            </p>
-          </div>
-
-          <div className="space-y-3">
-            <Link to="/create-tenant">Create Organization</Link>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+type SingleTenantViewProps = {
+  roles: RolesType[];
 };
+
+const AppLayout = ({ roles }: SingleTenantViewProps) => (
+  <SidebarProvider>
+    <div className="h-screen w-screen overflow-hidden">
+      <Navbar />
+      <AppSidebar userRoles={roles} />
+      <div className="h-full max-h-[calc(100%-129px)] overflow-y-auto">
+        <Outlet />
+      </div>
+      <MobileNavbar userRoles={roles} />
+    </div>
+  </SidebarProvider>
+);
