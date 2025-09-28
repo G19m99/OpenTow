@@ -28,12 +28,16 @@ import {
   Search,
 } from "lucide-react";
 import { useState } from "react";
-import DispatchForm from "./components/DispatchForm";
+import { Navigate } from "react-router";
 import { toast } from "sonner";
+import DispatchForm from "./components/DispatchForm";
+import { hasDashboardAccess } from "./utils";
 
 type Job = FunctionReturnType<typeof api.features.jobs.queries.allJobs>[number];
+
 const Dashboard = () => {
   const [searchQuery, setSearchQuery] = useState("");
+  const currentUser = useQuery(api.features.users.queries.getCurrentUser);
   const jobs = useQuery(api.features.jobs.queries.allJobs) || [];
   const updateJobStatus = useMutation(
     api.features.jobs.mutations.updateJobStatus
@@ -67,6 +71,10 @@ const Dashboard = () => {
       setIsDispatchOpen(false);
     }
   };
+
+  if (!hasDashboardAccess(currentUser?.roles || [])) {
+    return <Navigate to="open-jobs" />;
+  }
 
   return (
     <div className="space-y-4 pt-1">

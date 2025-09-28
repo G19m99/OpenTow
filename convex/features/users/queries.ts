@@ -1,6 +1,7 @@
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { query } from "../../_generated/server";
 import {
+  getCurrentUserTenant,
   getCurrentUserTenantId,
   hasRole,
   requireAnyRoleOrThrow,
@@ -113,5 +114,17 @@ export const getUserTenants = query({
       (tenant): tenant is NonNullable<typeof tenant> =>
         tenant !== null && tenant._id !== undefined
     );
+  },
+});
+
+export const getCurrentUser = query({
+  args: {},
+  handler: async (ctx) => {
+    const userInfo = await getCurrentUserTenant(ctx);
+    if (!userInfo) {
+      throw new Error("User has no tenant assigned");
+    }
+
+    return userInfo.tenant;
   },
 });
