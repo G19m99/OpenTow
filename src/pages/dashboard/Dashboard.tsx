@@ -37,7 +37,9 @@ type Job = FunctionReturnType<typeof api.features.jobs.queries.allJobs>[number];
 
 const Dashboard = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const currentUser = useQuery(api.features.users.queries.getCurrentUser);
+  const currentUserRoles = useQuery(
+    api.features.users.queries.getCurrentUserRoles
+  );
   const jobs = useQuery(api.features.jobs.queries.allJobs) || [];
   const updateJobStatus = useMutation(
     api.features.jobs.mutations.updateJobStatus
@@ -72,7 +74,9 @@ const Dashboard = () => {
     }
   };
 
-  if (!hasDashboardAccess(currentUser?.roles || [])) {
+  if (!currentUserRoles) return null;
+
+  if (!hasDashboardAccess(currentUserRoles || [])) {
     return <Navigate to="open-jobs" />;
   }
 

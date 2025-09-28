@@ -128,3 +128,15 @@ export const getCurrentUser = query({
     return userInfo.tenant;
   },
 });
+
+export const getCurrentUserRoles = query({
+  args: {},
+  handler: async (ctx) => {
+    const userInfo = await getCurrentUserTenant(ctx);
+    if (!userInfo) {
+      throw new Error("User has no tenant assigned");
+    }
+
+    return userInfo.roles;
+  },
+});
