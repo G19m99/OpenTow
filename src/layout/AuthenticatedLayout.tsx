@@ -58,7 +58,7 @@ type SingleTenantViewProps = {
 };
 
 const AppLayout = ({ roles }: SingleTenantViewProps) => (
-  <SidebarProvider>
+  <SidebarProvider defaultOpen={false}>
     <div className="h-screen w-screen overflow-hidden">
       <Navbar />
       <AppSidebar userRoles={roles} />
