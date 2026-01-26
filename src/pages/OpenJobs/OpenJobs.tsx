@@ -1,4 +1,3 @@
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -8,7 +7,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
-import { priorityLabels } from "@/constants";
+import { PriorityBadge } from "@/components/ui/status-badge";
 import { api } from "@c/_generated/api";
 import type { Id } from "@c/_generated/dataModel";
 import { useMutation, useQuery } from "convex/react";
@@ -25,7 +24,7 @@ const OpenJobs = () => {
     (call) =>
       call.customerName.toLowerCase().includes(searchQuery.toLowerCase()) ||
       call.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      call._id.toLowerCase().includes(searchQuery.toLowerCase())
+      call._id.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   const handleClaimJob = (jobId: Id<"jobs">) => {
@@ -66,12 +65,7 @@ const OpenJobs = () => {
                   <div>
                     <h3 className="font-semibold text-base flex items-center gap-2">
                       {call.customerName}
-                      <Badge
-                        variant={priorityLabels[call.priority].variant}
-                        className="rounded-full text-xs"
-                      >
-                        {priorityLabels[call.priority].label}
-                      </Badge>
+                      <PriorityBadge priority={call.priority} />
                     </h3>
                     <p className="text-xs text-muted-foreground">
                       {call._id} • {call.vehicleInfo}
@@ -92,15 +86,15 @@ const OpenJobs = () => {
 
                 <div className="grid grid-cols-1 gap-2 mt-3">
                   <div className="flex items-center gap-2 text-sm">
-                    <MapPin className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                    <MapPin className="h-4 w-4 text-muted-foreground shrink-0" />
                     <span className="truncate">{call.location}</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm">
-                    <Phone className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                    <Phone className="h-4 w-4 text-muted-foreground shrink-0" />
                     <span>{call.customerPhone}</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm">
-                    <Clock className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                    <Clock className="h-4 w-4 text-muted-foreground shrink-0" />
                     <span>{new Date(call.createdAt).toLocaleString()}</span>
                   </div>
                 </div>

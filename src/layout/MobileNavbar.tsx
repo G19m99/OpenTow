@@ -11,7 +11,7 @@ const MobileNavbar = ({ userRoles }: MobileNavbarProps) => {
   const { navItems } = useNavItems(userRoles);
 
   return (
-    <div className="fixed bottom-0 left-0 z-50 h-16 w-full border-t bg-white md:hidden">
+    <div className="fixed bottom-0 left-0 z-50 h-16 w-full border-t  md:hidden">
       <div className="mx-auto flex h-full items-center justify-around px-3">
         {navItems.map((item) => (
           <Link
@@ -19,7 +19,7 @@ const MobileNavbar = ({ userRoles }: MobileNavbarProps) => {
             to={item.href}
             className={cn(
               "hover:bg-muted inline-flex flex-col items-center justify-center px-1 transition-colors",
-              pathname === item.href ? "text-primary" : "text-muted-foreground"
+              pathname === item.href ? "text-primary" : "text-muted-foreground",
             )}
           >
             <item.icon className="mb-1 h-6 w-6" />

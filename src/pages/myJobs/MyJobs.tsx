@@ -1,4 +1,3 @@
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -7,8 +6,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { StatusBadge, PriorityBadge } from "@/components/ui/status-badge";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { priorityLabels, statusLabels, type StatusType } from "@/constants";
+import { type StatusType } from "@/constants";
 import { api } from "@c/_generated/api";
 import type { Id } from "@c/_generated/dataModel";
 import { useMutation, useQuery } from "convex/react";
@@ -25,7 +25,7 @@ import { useState } from "react";
 const MyJobs = () => {
   const jobs = useQuery(api.features.jobs.queries.usersJobs) || [];
   const updateJobStatus = useMutation(
-    api.features.jobs.mutations.updateJobStatus
+    api.features.jobs.mutations.updateJobStatus,
   );
   const [activeTab, setActiveTab] = useState("all");
 
@@ -41,7 +41,11 @@ const MyJobs = () => {
 
   return (
     <div className="space-y-4">
-      <Tabs defaultValue="all" className="w-full mt-1.5" onValueChange={setActiveTab}>
+      <Tabs
+        defaultValue="all"
+        className="w-full mt-1.5"
+        onValueChange={setActiveTab}
+      >
         <TabsList className="grid grid-cols-3 mb-4 w-full">
           <TabsTrigger value="all">All</TabsTrigger>
           <TabsTrigger value="assigned">New</TabsTrigger>
@@ -65,40 +69,30 @@ const MyJobs = () => {
                   <div>
                     <h3 className="font-semibold text-base flex items-center gap-2">
                       {call.customerName}
-                      <Badge
-                        variant={priorityLabels[call.priority].variant}
-                        className="rounded-full text-xs"
-                      >
-                        {priorityLabels[call.priority].label}
-                      </Badge>
+                      <PriorityBadge priority={call.priority} />
                     </h3>
                     <p className="text-xs text-muted-foreground">
                       {call._id} • {call.vehicleInfo}
                     </p>
                   </div>
-                  <Badge
-                    variant={statusLabels[call.status].variant}
-                    className="rounded-full"
-                  >
-                    {statusLabels[call.status].label}
-                  </Badge>
+                  <StatusBadge status={call.status} />
                 </div>
 
                 <div className="grid grid-cols-1 gap-2 mt-3">
                   <div className="flex items-center gap-2 text-sm">
-                    <MapPin className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                    <MapPin className="h-4 w-4 text-muted-foreground shrink-0" />
                     <span className="truncate">{call.location}</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm">
-                    <MapPin className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                    <MapPin className="h-4 w-4 text-muted-foreground shrink-0" />
                     <span className="truncate">{call.location}</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm">
-                    <Phone className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                    <Phone className="h-4 w-4 text-muted-foreground shrink-0" />
                     <span>{call.customerPhone}</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm">
-                    <Clock className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                    <Clock className="h-4 w-4 text-muted-foreground shrink-0" />
                     <span>{new Date(call.createdAt).toLocaleString()}</span>
                   </div>
                 </div>

@@ -1,4 +1,3 @@
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -14,8 +13,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
+import { StatusBadge, PriorityBadge } from "@/components/ui/status-badge";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { priorityLabels, statusLabels } from "@/constants";
 import { api } from "@c/_generated/api";
 import { useMutation, useQuery } from "convex/react";
 import type { FunctionReturnType } from "convex/server";
@@ -38,11 +37,11 @@ type Job = FunctionReturnType<typeof api.features.jobs.queries.allJobs>[number];
 const Dashboard = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const currentUserRoles = useQuery(
-    api.features.users.queries.getCurrentUserRoles
+    api.features.users.queries.getCurrentUserRoles,
   );
   const jobs = useQuery(api.features.jobs.queries.allJobs) || [];
   const updateJobStatus = useMutation(
-    api.features.jobs.mutations.updateJobStatus
+    api.features.jobs.mutations.updateJobStatus,
   );
   const [activeTab, setActiveTab] = useState("all");
   const [isDispatchOpen, setIsDispatchOpen] = useState(false);
@@ -63,7 +62,7 @@ const Dashboard = () => {
       (job) =>
         job.customerName.toLowerCase().includes(searchQuery.toLowerCase()) ||
         job.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        job._id.toLowerCase().includes(searchQuery.toLowerCase())
+        job._id.toLowerCase().includes(searchQuery.toLowerCase()),
     )
     .filter((job) => activeTab === "all" || job.status === activeTab);
 
@@ -130,24 +129,14 @@ const Dashboard = () => {
                   <div>
                     <h3 className="font-semibold text-base flex items-center gap-2 capitalize">
                       {job.customerName}
-                      <Badge
-                        variant={priorityLabels[job.priority].variant}
-                        className="rounded-full text-xs"
-                      >
-                        {priorityLabels[job.priority].label}
-                      </Badge>
+                      <PriorityBadge priority={job.priority} />
                     </h3>
                     <p className="text-xs text-muted-foreground">
                       {job._id} • {job.vehicleInfo}
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Badge
-                      variant={statusLabels[job.status].variant}
-                      className="rounded-full"
-                    >
-                      {statusLabels[job.status].label}
-                    </Badge>
+                    <StatusBadge status={job.status} />
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button variant="ghost" size="icon" className="h-8 w-8">
@@ -173,15 +162,15 @@ const Dashboard = () => {
 
                 <div className="grid grid-cols-1 gap-2 mt-3">
                   <div className="flex items-center gap-2 text-sm">
-                    <MapPin className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                    <MapPin className="h-4 w-4 text-muted-foreground shrink-0" />
                     <span className="truncate">{job.location}</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm">
-                    <Phone className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                    <Phone className="h-4 w-4 text-muted-foreground shrink-0" />
                     <span>{job.customerPhone}</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm">
-                    <Clock className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                    <Clock className="h-4 w-4 text-muted-foreground shrink-0" />
                     <span>{new Date(job.createdAt).toLocaleString()}</span>
                   </div>
                 </div>
@@ -206,7 +195,7 @@ const Dashboard = () => {
 
       {/* Dispatch Dialog */}
       <Dialog open={isDispatchOpen} onOpenChange={handleDialogOpenChange}>
-        <DialogContent className="sm:max-w-[500px]">
+        <DialogContent className="sm:max-w-125">
           <DialogHeader>
             <DialogTitle>Create New Job</DialogTitle>
           </DialogHeader>
