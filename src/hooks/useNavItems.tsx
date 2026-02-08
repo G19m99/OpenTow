@@ -1,38 +1,54 @@
-import { ClipboardList, LayoutGrid, Truck, Users } from "lucide-react";
+import {
+  ClipboardList,
+  LayoutDashboard,
+  Phone,
+  Radio,
+  Settings,
+  Users,
+  Warehouse,
+} from "lucide-react";
 
 const useNavItems = (userRoles: ("admin" | "dispatcher" | "driver")[]) => {
   const isAdmin = userRoles.includes("admin");
   const isDispatcher = userRoles.includes("dispatcher");
   const isDriver = userRoles.includes("driver");
 
-  const navItems = [
-    {
-      title: "Dashboard",
-      href: "/",
-      icon: LayoutGrid,
-      show: isDispatcher || isAdmin,
-    },
-    {
-      title: "Open Calls",
-      href: "/open-jobs",
-      icon: ClipboardList,
-      show: isDriver || isDispatcher || isAdmin,
-    },
-    {
-      title: "My Jobs",
-      href: "/my-jobs",
-      icon: Truck,
-      show: isDriver || isDispatcher || isAdmin,
-    },
-    {
-      title: "Users",
-      href: "/users",
-      icon: Users,
-      show: isAdmin,
-    },
-  ].filter((item) => item.show);
+  if (isAdmin) {
+    return {
+      navItems: [
+        { title: "Dashboard", href: "/", icon: LayoutDashboard },
+        { title: "Dispatch", href: "/dispatch", icon: Phone },
+        { title: "Calls", href: "/calls", icon: ClipboardList },
+        { title: "Impounds", href: "/impounds", icon: Warehouse },
+        { title: "Users", href: "/users", icon: Users },
+        { title: "Settings", href: "/settings", icon: Settings },
+      ],
+    };
+  }
 
-  return { navItems };
+  if (isDispatcher) {
+    return {
+      navItems: [
+        { title: "Dashboard", href: "/", icon: LayoutDashboard },
+        { title: "Dispatch", href: "/dispatch", icon: Phone },
+        { title: "Calls", href: "/calls", icon: ClipboardList },
+        { title: "Impounds", href: "/impounds", icon: Warehouse },
+      ],
+    };
+  }
+
+  if (isDriver) {
+    return {
+      navItems: [
+        { title: "Dashboard", href: "/", icon: LayoutDashboard },
+        { title: "Available", href: "/available", icon: Radio },
+        { title: "My Calls", href: "/my-calls", icon: ClipboardList },
+        { title: "Profile", href: "/profile", icon: Settings },
+      ],
+    };
+  }
+
+  return { navItems: [] };
 };
 
 export default useNavItems;

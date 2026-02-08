@@ -6,6 +6,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Truck } from "lucide-react";
 import { Authenticated, Unauthenticated } from "convex/react";
 import React from "react";
 import { Navigate } from "react-router";
@@ -14,15 +15,13 @@ export function SignInForm() {
   return (
     <React.Fragment>
       <Unauthenticated>
-        <div className="flex flex-col items-center justify-center min-h-screen py-2">
+        <div className="flex flex-col items-center justify-center min-h-screen py-2 bg-background">
           <Card className="w-full max-w-md">
             <CardHeader className="space-y-1">
               <div className="flex justify-center mb-4">
-                <img
-                  src="/truck-dark.svg"
-                  alt="Truck Icon"
-                  className="w-16 h-16 mr-2 bg-black rounded-full"
-                />
+                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary">
+                  <Truck className="h-8 w-8 text-primary-foreground" />
+                </div>
               </div>
               <CardTitle className="text-2xl text-center">
                 Welcome to OpenTow

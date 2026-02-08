@@ -1,39 +1,34 @@
 import { Link } from "react-router";
+import { Building2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 
 const NoTenantView = () => {
   return (
-    <div className="h-screen w-screen flex items-center justify-center bg-gray-50">
+    <div className="h-screen w-screen flex items-center justify-center bg-background">
       <div className="max-w-md w-full mx-4">
-        <div className="bg-white rounded-lg shadow-md p-8 text-center">
-          <div className="mb-6">
-            <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-blue-100 mb-4">
-              <svg
-                className="h-6 w-6 text-blue-600"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-4m-5 0H3m2 0h4M9 7h6m-6 4h6m-6 4h6m-6 4h6"
-                />
-              </svg>
+        <Card>
+          <CardContent className="p-8 text-center">
+            <div className="mb-6">
+              <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-primary/10 mb-4">
+                <Building2 className="h-6 w-6 text-primary" />
+              </div>
+              <h2 className="text-xl font-semibold mb-2">
+                No Organization Found
+              </h2>
+              <p className="text-muted-foreground">
+                You're not currently associated with any organization. Create one
+                to get started.
+              </p>
             </div>
-            <h2 className="text-xl font-semibold text-gray-900 mb-2">
-              No Organization Found
-            </h2>
-            <p className="text-gray-600">
-              You're not currently associated with any organization. Create one
-              to get started.
-            </p>
-          </div>
 
-          <div className="space-y-3">
-            <Link to="/create-tenant">Create Organization</Link>
-          </div>
-        </div>
+            <div className="space-y-3">
+              <Button asChild className="w-full">
+                <Link to="/create-tenant">Create Organization</Link>
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

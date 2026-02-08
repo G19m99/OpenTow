@@ -1,41 +1,72 @@
 # OpenTow
 
-A B2B SaaS platform designed for towing companies, implementing an open dispatch model where drivers can claim jobs on a first-come, first-served basis
+A B2B SaaS dispatch platform for towing companies. Multi-tenant system with role-based access where dispatchers create calls, drivers claim and complete them, and admins manage everything.
 
 ## Demo
 
-[Demo hosted on netlify](https://opentow.netlify.app/)
+[Demo hosted on Netlify](https://opentow.netlify.app/)
 
 ## Features
 
-- Real-time with reactive updates
-- Multi-organization support
-- Role-based access per tenant (admin, dispatcher, driver)
+- Real-time reactive updates via Convex
+- Multi-organization support with tenant switching
+- Role-based access control (admin, dispatcher, driver)
+- Call dispatch workflow: open → assigned → en route → on scene → hooked → in transit → completed
+- Impound lot management with billing tracking
+- Driver shift management
+- Customer database with phone lookup
+- Role-specific dashboards and navigation
+- Dark theme UI
 
 ## Tech Stack
 
-React, Typescript, Redux, TailwindCSS, Convex
+React 19, TypeScript, React Router 7, TailwindCSS 4, shadcn/ui, Convex, Recharts
 
-## Architecture & Authentication
-
-This SaaS platform supports multiple organizations (tenants), each with isolated data and user roles. The backend is powered by [Convex](https://convex.dev), and user authentication is handled via Google OAuth.
+## Architecture
 
 ### Multi-Tenancy
 
-- Each towing company is represented as a **tenant**.
-- **Users can belong to multiple tenants**, with tenant-specific roles (e.g., admin, dispatcher, driver).
-- All domain data (jobs, users, invites) is **scoped by tenantId** to ensure strict data isolation.
-- The current tenant is tracked via `currentTenantId` on the user record, allowing seamless context switching.
-- Queries and mutations are automatically filtered by the current tenant to prevent cross-tenant access.
+- Each towing company is a **tenant** with isolated data.
+- **Users can belong to multiple tenants**, with tenant-specific roles (admin, dispatcher, driver).
+- All domain data (calls, customers, impounds, invites) is **scoped by tenantId**.
+- The active tenant is tracked via `userSessionTenants`, allowing seamless org switching.
+- Every query and mutation filters by the current tenant to prevent cross-tenant access.
 
 ### Authentication & Onboarding
 
-- Authentication is done via **Google OAuth**, using Convex Auth.
-- Upon first login:
-  - If the user's email matches a pending invite (by email + tenant), they are auto-linked to that organization and assigned a role.
-  - If no invite is found, users land on an onboarding screen to **create a new tenant** or (in future) **request access** to an existing one.
+- Authentication via **Google OAuth** using `@convex-dev/auth`.
+- On first login:
+  - If the user's email matches a pending invite, they are auto-linked to that organization and assigned a role.
+  - Otherwise, users land on an onboarding screen to **create a new tenant**.
 - Session state is managed by Convex, and protected routes ensure users only access tenant-specific data.
 
-## Google OAuth setup
+### Role-Based Views
 
-In order to use the google auth follow the instructions [here](https://labs.convex.dev/auth/config/oauth/google)
+| Role | Pages |
+|---|---|
+| Admin | Dashboard, Dispatch, Calls, Impounds, Users, Settings |
+| Dispatcher | Dashboard, Dispatch, Calls, Impounds |
+| Driver | Dashboard, Available Calls, My Calls, Profile |
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js
+- A [Convex](https://convex.dev) account
+- Google OAuth credentials ([setup guide](https://labs.convex.dev/auth/config/oauth/google))
+
+### Development
+
+```bash
+npm install
+npx convex dev     # Start Convex backend
+npm run dev        # Start Vite dev server
+```
+
+### Build
+
+```bash
+npm run build      # Type-check + production build
+npm run lint       # ESLint
+```
