@@ -1,13 +1,11 @@
 import LoadingSpinner from "@/components/LoadingSpinner";
 import NoTenantView from "@/components/tenants/NoTenantView";
 import { TenantSelector } from "@/components/tenants/TenantSelector";
-import { SidebarProvider } from "@/components/ui/sidebar";
 import type { RolesType } from "@/constants";
 import { useTenantState } from "@/hooks/useTenantState";
 import { Navigate, Outlet } from "react-router";
-import AppSidebar from "./AppSidebar";
+import Header from "./Navbar";
 import MobileNavbar from "./MobileNavbar";
-import Navbar from "./Navbar";
 
 export function AuthenticatedLayout() {
   const { tenantList, activeTenant, isLoadingTenants, isLoadingActiveTenant } =
@@ -53,19 +51,16 @@ export function AuthenticatedLayout() {
 
 export default AuthenticatedLayout;
 
-type SingleTenantViewProps = {
+type AppLayoutProps = {
   roles: RolesType[];
 };
 
-const AppLayout = ({ roles }: SingleTenantViewProps) => (
-  <SidebarProvider defaultOpen={false}>
-    <div className="h-screen w-screen overflow-hidden">
-      <Navbar />
-      <AppSidebar userRoles={roles} />
-      <div className="h-full max-h-[calc(100%-129px)] overflow-y-auto">
-        <Outlet />
-      </div>
-      <MobileNavbar userRoles={roles} />
-    </div>
-  </SidebarProvider>
+const AppLayout = ({ roles }: AppLayoutProps) => (
+  <div className="flex h-dvh flex-col bg-background">
+    <Header roles={roles} />
+    <main className="flex-1 overflow-y-auto pb-20 px-4 py-4">
+      <Outlet />
+    </main>
+    <MobileNavbar userRoles={roles} />
+  </div>
 );

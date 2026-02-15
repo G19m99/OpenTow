@@ -32,9 +32,10 @@ export const getUsers = query({
         if (!user) return null;
         return {
           ...user,
-          roles: userTenant.roles, // Include the roles from the junction table
+          roles: userTenant.roles,
           tenantId: userTenant.tenantId,
           active: userTenant.active,
+          isOnShift: userTenant.isOnShift ?? false,
         };
       })
     );
@@ -70,6 +71,7 @@ export const getDrivers = query({
           ...user,
           roles: driver.roles,
           tenantId: driver.tenantId,
+          isOnShift: driver.isOnShift ?? false,
         };
       })
     );
@@ -104,7 +106,7 @@ export const getUserTenants = query({
         if (!tenant) return null;
         return {
           ...tenant,
-          roles: userTenant.roles, // Include the roles from the junction table
+          roles: userTenant.roles,
           active: userTenant.active,
         };
       })
@@ -125,7 +127,13 @@ export const getCurrentUser = query({
       throw new Error("User has no tenant assigned");
     }
 
-    return userInfo.tenant;
+    const user = await ctx.db.get(userInfo.tenant.userId);
+    return {
+      ...userInfo.tenant,
+      name: user?.name ?? "",
+      email: user?.email ?? "",
+      isOnShift: userInfo.tenant.isOnShift ?? false,
+    };
   },
 });
 
