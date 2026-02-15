@@ -50,7 +50,7 @@ export const createCall = mutation({
 
     const tenantId = tenant.tenant.tenantId;
     const now = Date.now();
-    const callNumber = await generateCallNumber(ctx, tenantId);
+    const callNumber = generateCallNumber();
 
     const callId = await ctx.db.insert("calls", {
       tenantId,

@@ -1,19 +1,17 @@
-import type { Id } from "../_generated/dataModel";
-import type { MutationCtx } from "../_generated/server";
-
 /**
- * Generate the next sequential call number for a tenant.
- * Format: OT-0001, OT-0002, etc.
+ * Generate a unique call number using timestamp + random suffix.
+ * Format: OT-YYMMDD-XXXX (e.g., OT-260214-K7M2)
+ *
+ * No database reads needed — eliminates the race condition where
+ * concurrent mutations could produce duplicate sequential numbers.
  */
-export async function generateCallNumber(
-  ctx: MutationCtx,
-  tenantId: Id<"tenants">
-): Promise<string> {
-  const calls = await ctx.db
-    .query("calls")
-    .withIndex("by_tenantId", (q) => q.eq("tenantId", tenantId))
-    .collect();
+export function generateCallNumber(): string {
+  const now = new Date();
+  const yy = String(now.getFullYear()).slice(-2);
+  const mm = String(now.getMonth() + 1).padStart(2, "0");
+  const dd = String(now.getDate()).padStart(2, "0");
 
-  const nextNumber = calls.length + 1;
-  return `OT-${String(nextNumber).padStart(4, "0")}`;
+  const suffix = crypto.randomUUID().slice(0, 4).toUpperCase();
+
+  return `OT-${yy}${mm}${dd}-${suffix}`;
 }
