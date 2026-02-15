@@ -92,6 +92,23 @@ export default function Impounds() {
         notes: form.notes || undefined,
       });
       toast.success("Impound added");
+      setForm({
+        vehicleMake: "",
+        vehicleModel: "",
+        vehicleYear: "",
+        vehicleColor: "",
+        vehicleLicensePlate: "",
+        vehicleCondition: "",
+        ownerName: "",
+        ownerPhone: "",
+        reason: "storage",
+        reasonNotes: "",
+        lotLocation: "",
+        dailyRate: "50",
+        towFee: "",
+        adminFee: "",
+        notes: "",
+      });
       setIsAddOpen(false);
     } catch {
       toast.error("Failed to add impound");
