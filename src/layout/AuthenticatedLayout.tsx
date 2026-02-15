@@ -56,7 +56,7 @@ type AppLayoutProps = {
 };
 
 const AppLayout = ({ roles }: AppLayoutProps) => (
-  <div className="flex min-h-screen flex-col bg-background">
+  <div className="flex h-dvh flex-col bg-background">
     <Header roles={roles} />
     <main className="flex-1 overflow-y-auto pb-20 px-4 py-4">
       <Outlet />
